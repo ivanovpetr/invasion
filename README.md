@@ -1,4 +1,4 @@
-#Invasion
+# Invasion
 ![Invasion](./assets/invasion.png)
 
 This extremely useful tool will help you with the most important task. Everyone have to deal with the danger of alien invasion. The main problem in this case estimation of possible damage to your planet.
@@ -56,7 +56,7 @@ London north=Salehard4 south=Berlin  east=Paris
 Berlin south=Boston west=Salehard4 east=Moscow
 ```
 
-##Usage
+## Usage
 Build invasion using 
 ```
 make build
@@ -67,6 +67,6 @@ And then launch simulation with
 ```
 By default, your planet will be invaded with 15 aliens, but you can change it with `-n` flag
 ```
-.dest/invasion simulate path/to/map -n=40
+.dest/invasion simulate path/to/map --n=40
 ```
 
