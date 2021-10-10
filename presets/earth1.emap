@@ -1,0 +1,16 @@
+Paris south=Vladivostok west=San_Francisco east=Moscow
+Boston north=New_York west=Porto east=Vladivostok
+New_York north=London south=Belgrade
+Salehard4 north=Belgrade south=Porto west=Paris east=Rome
+Moscow north=Prague west=Salehard4 east=Berlin
+Los_Angeles north=Warsaw south=London west=Madrid east=Porto
+London north=Madrid south=Warsaw west=Porto east=Paris
+Berlin south=Belgrade west=Porto east=Rome
+San_Francisco north=Madrid west=New_York
+Prague north=Warsaw south=Boston west=Belgrade east=Rome
+Porto north=Berlin west=Salehard4 east=Madrid
+Rome north=Vladivostok south=Belgrade west=New_York
+Warsaw north=Paris south=Porto west=Prague east=Salehard4
+Belgrade south=Berlin west=London east=Warsaw
+Madrid north=Los_Angeles south=Prague east=Boston
+Vladivostok north=Prague west=Porto
