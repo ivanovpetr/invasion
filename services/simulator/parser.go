@@ -135,7 +135,7 @@ func newParser(src io.Reader, filename string) *parser {
 	p.s.Filename = filename
 	p.s.Whitespace ^= 1 << '\n'
 	p.s.IsIdentRune = func(ch rune, i int) bool {
-		return ch != '=' && (ch > '!' && ch < '~' || unicode.IsLetter(ch))
+		return ch != '=' && (ch >= '!' && ch <= '~' || unicode.IsLetter(ch))
 	}
 	return p
 }
