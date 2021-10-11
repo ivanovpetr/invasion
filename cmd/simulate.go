@@ -2,7 +2,9 @@ package cmd
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
+	"time"
 
 	"github.com/ivanovpetr/invasion/services/simulator"
 	"github.com/spf13/cobra"
@@ -28,6 +30,7 @@ Using invasion you can simulate any type of aliens invasion scenario against any
 func simulateHandler(cmd *cobra.Command, args []string) error {
 	filePath := args[0]
 
+	rand.Seed(time.Now().UnixNano())
 	numberOfAliens, _ := cmd.Flags().GetInt(flagAliensNumber)
 	// parse the provided map file
 	simulation, err := simulator.CreateSimulationFromPath(filePath)
