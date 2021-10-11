@@ -63,10 +63,10 @@ make build
 ```
 And then launch simulation with
 ```
-.dest/invasion simulate path/to/map
+./build/invasion simulate path/to/map
 ```
 By default, your planet will be invaded with 15 aliens, but you can change it with `-n` flag
 ```
-.dest/invasion simulate path/to/map --n=40
+./build/invasion simulate path/to/map --n=40
 ```
 
