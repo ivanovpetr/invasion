@@ -17,17 +17,20 @@ const (
 	directionEast  = "east"
 )
 
+// parsedCity represents a city parsed from a map file
 type parsedCity struct {
 	line                     int
 	north, east, south, west string
 }
 
-func (pc *parsedCity) directionExists(name string) bool {
-	return pc.north == name || pc.east == name || pc.south == name || pc.west == name
+// directionExists checks whether city has direction to city called cityName or not
+func (pc *parsedCity) directionExists(cityName string) bool {
+	return pc.north == cityName || pc.east == cityName || pc.south == cityName || pc.west == cityName
 }
 
-func (pc *parsedCity) isDirectionSet(name string) bool {
-	switch name {
+// isDirectionSet checks whether city has set direction with directionType or not
+func (pc *parsedCity) isDirectionSet(directionType string) bool {
+	switch directionType {
 	case directionSouth:
 		return pc.south != ""
 	case directionNorth:
@@ -41,6 +44,7 @@ func (pc *parsedCity) isDirectionSet(name string) bool {
 	}
 }
 
+// setDirection sets direction with provided direction and value
 func (pc *parsedCity) setDirection(direction, value string) {
 	switch direction {
 	case directionSouth:
@@ -54,6 +58,7 @@ func (pc *parsedCity) setDirection(direction, value string) {
 	}
 }
 
+// getDirections returns list of all city directions
 func (pc *parsedCity) getDirections() []mapDirection {
 	directions := make([]mapDirection, 0, 4)
 	if pc.south != "" {
@@ -92,6 +97,7 @@ const (
 	expectEqualSign
 )
 
+// parserError may be returned during a parsing process
 type parserError struct {
 	message  string
 	position scanner.Position
@@ -101,6 +107,7 @@ func (p parserError) Error() string {
 	return fmt.Sprintf("%s:%d:%d: %s", p.position.Filename, p.position.Line, p.position.Column, p.message)
 }
 
+// newParserError creates new parser error
 func newParserError(position scanner.Position, msg string) error {
 	return parserError{
 		message:  msg,
@@ -108,6 +115,7 @@ func newParserError(position scanner.Position, msg string) error {
 	}
 }
 
+// parser parses map input and creates Simulation
 type parser struct {
 	parsed             bool
 	currentExpectation expectation
@@ -117,6 +125,8 @@ type parser struct {
 	parsedCities       map[string]*parsedCity
 }
 
+// newParser creates new parser with provided input and filename.
+// Filename will be used in case of parsing errors in the error output
 func newParser(src io.Reader, filename string) *parser {
 	p := &parser{
 		parsedCities: map[string]*parsedCity{},
@@ -130,10 +140,12 @@ func newParser(src io.Reader, filename string) *parser {
 	return p
 }
 
+// currentCityHasAtLeastOneDirection checks whether current city has  at least one direction or not
 func (p *parser) currentCityHasAtLeastOneDirection() bool {
 	return len(p.parsedCities[p.currentCity].getDirections()) != 0
 }
 
+// parse parses input
 func (p *parser) parse() error {
 	if p.parsed {
 		return errors.New("already parsed")
@@ -166,6 +178,7 @@ func (p *parser) parse() error {
 	return nil
 }
 
+// handleToken handles map fie tokens basing on parser expectation
 func (p *parser) handleToken(token string) error {
 	switch p.currentExpectation {
 	case expectCity:
@@ -193,6 +206,7 @@ func (p *parser) handleToken(token string) error {
 	return nil
 }
 
+// handleCityToken handles city expectation
 func (p *parser) handleCityToken(token string) error {
 	// check for existence
 	if _, ok := p.parsedCities[token]; ok {
@@ -212,6 +226,7 @@ func (p *parser) handleCityToken(token string) error {
 	return nil
 }
 
+// handleDirectionValue handles direction value expectation
 func (p *parser) handleDirectionValue(token string) error {
 	// validate city
 	// micro optimization: try to check mapDirection value against parsed city and avoid usage of regexp
@@ -232,6 +247,7 @@ func (p *parser) handleDirectionValue(token string) error {
 	return nil
 }
 
+// handleDirectionType handles direction type expectation
 func (p *parser) handleDirectionType(token string) error {
 	// validate mapDirection
 	if !isValidDirection(token) {
@@ -250,6 +266,7 @@ func (p *parser) handleDirectionType(token string) error {
 	return nil
 }
 
+// handleEqualSign handles equal sign expectation
 func (p *parser) handleEqualSign(token string) error {
 	if token != "=" {
 		return newParserError(p.s.Pos(), fmt.Sprintf("unexpected token %s, expected =", token))
@@ -258,6 +275,7 @@ func (p *parser) handleEqualSign(token string) error {
 	return nil
 }
 
+// checkDirectionValuesExistence checks parsed input that it has no direction value pointed to nonexistent cities
 func (p *parser) checkDirectionValuesExistence() error {
 	if !p.parsed {
 		return errors.New("cannot check direction value for unparsed file")
@@ -272,6 +290,7 @@ func (p *parser) checkDirectionValuesExistence() error {
 	return nil
 }
 
+// buildSimulation builds Simulation from parsed input
 func (p *parser) buildSimulation() (*Simulation, error) {
 	// check parsed flag
 	if !p.parsed {
@@ -291,6 +310,7 @@ func (p *parser) buildSimulation() (*Simulation, error) {
 	return s, nil
 }
 
+// CreateSimulationFromPath crates simulation from a map file
 func CreateSimulationFromPath(path string) (*Simulation, error) {
 	mapFile, err := os.Open(path)
 	if err != nil {
@@ -301,6 +321,7 @@ func CreateSimulationFromPath(path string) (*Simulation, error) {
 	return createSimulation(mapFile, filepath.Base(path))
 }
 
+// createSimulation creates simulation from input
 func createSimulation(src io.Reader, filename string) (*Simulation, error) {
 	p := newParser(src, filename)
 	err := p.parse()

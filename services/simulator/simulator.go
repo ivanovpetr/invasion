@@ -8,8 +8,10 @@ import (
 	"strings"
 )
 
-const invasionDuration = 10000
-const cityDestructionThreshold = 2
+const (
+	invasionDuration         = 10000
+	cityDestructionThreshold = 2
+)
 
 type planetMap map[string]*city
 
@@ -21,6 +23,7 @@ func (p planetMap) getRandomCity() string {
 	return ""
 }
 
+// mapDirection one of the fourth directions which city can have
 type mapDirection struct {
 	directionType  string
 	directionValue string
@@ -92,11 +95,12 @@ type alien struct {
 	isDead bool
 }
 
-// Simulation
+// Simulation allows running invasion scenarios with different number of aliens
 type Simulation struct {
 	initialMap planetMap
 }
 
+// getMapCopy returns copy af a simulation map
 func (s *Simulation) getMapCopy() planetMap {
 	cp := make(planetMap)
 	for name, c := range s.initialMap {
@@ -113,6 +117,7 @@ type SimulationResult struct {
 	Logs      []string
 }
 
+// PrintResultMap prints out result state of a map in the standard map format
 func (sr *SimulationResult) PrintResultMap(out io.Writer) error {
 	for _, c := range sr.ResultMap {
 		if c.isDestroyed {
@@ -136,6 +141,8 @@ func (sr *SimulationResult) PrintResultMap(out io.Writer) error {
 	return nil
 }
 
+// Run runs simulation with provided number of aliens, returns result of a simulation
+// with battle logs, aliens and final state of a map
 func (s *Simulation) Run(numberOfAliens int64) *SimulationResult {
 	// All aliens take their actions simultaneously. There are three main simulation phases Spawn, Battle, Moving.
 	// Spawn. Create aliens and put every of them in a random city
